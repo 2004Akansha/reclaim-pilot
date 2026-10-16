@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\RecoveryCase;
 use Illuminate\Http\Request;
 use App\Services\ScreenshotAnalysisService;
-
+use Illuminate\Support\Facades\Auth;
 
 class CaseController extends Controller
 {
@@ -86,7 +86,9 @@ class CaseController extends Controller
         |--------------------------------------------------------------------------
         */
 
-        $case = RecoveryCase::create([
+        $user = Auth::user();
+
+        $case = $user->recoveryCases()->create([
             'issue_type' => $validated['issue_type'],
 
             'description' => $validated['description'] ?? null,

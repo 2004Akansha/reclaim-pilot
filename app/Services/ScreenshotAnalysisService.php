@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\CaseScreenshot;
 use App\Services\AI\AIClient;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use RuntimeException;
 
@@ -14,13 +15,18 @@ class ScreenshotAnalysisService
     ) {
     }
 
+    /**
+     * Analyze a screenshot using vision AI.
+     *
+     * If Ollama/Vision AI is unavailable, return a safe
+     * fallback result instead of failing the entire queue job.
+     */
     public function analyze(
         CaseScreenshot $screenshot
     ): array {
-
         /*
         |--------------------------------------------------------------------------
-        | Only image files should reach vision AI
+        | Check file extension
         |--------------------------------------------------------------------------
         */
 
@@ -36,11 +42,38 @@ class ScreenshotAnalysisService
             ['jpg', 'jpeg', 'png', 'webp'],
             true
         )) {
-            throw new RuntimeException(
-                'This screenshot format is not supported by vision analysis.'
-            );
+            return [
+                'detected_issue' => 'unknown',
+                'visible_message' => null,
+                'possible_reason' => null,
+                'confidence' => 0,
+                'raw_analysis' => [
+                    'source' => 'rule_based',
+                    'reason' => 'Unsupported image format for vision analysis.',
+                ],
+            ];
         }
 
+        /*
+        |--------------------------------------------------------------------------
+        | Check whether file exists
+        |--------------------------------------------------------------------------
+        */
+
+        if (!Storage::disk('public')->exists(
+            $screenshot->file_path
+        )) {
+            return [
+                'detected_issue' => 'unknown',
+                'visible_message' => null,
+                'possible_reason' => null,
+                'confidence' => 0,
+                'raw_analysis' => [
+                    'source' => 'rule_based',
+                    'reason' => 'Screenshot file does not exist.',
+                ],
+            ];
+        }
 
         /*
         |--------------------------------------------------------------------------
@@ -48,37 +81,46 @@ class ScreenshotAnalysisService
         |--------------------------------------------------------------------------
         */
 
-        if (!Storage::disk('public')->exists(
-            $screenshot->file_path
-        )) {
-            throw new RuntimeException(
-                'Screenshot file does not exist.'
+        try {
+            $contents = Storage::disk('public')
+                ->get($screenshot->file_path);
+        } catch (\Throwable $e) {
+
+            Log::warning(
+                'Could not read screenshot. Continuing without vision analysis.',
+                [
+                    'screenshot_id' => $screenshot->id,
+                    'error' => $e->getMessage(),
+                ]
             );
+
+            return [
+                'detected_issue' => 'unknown',
+                'visible_message' => null,
+                'possible_reason' => null,
+                'confidence' => 0,
+                'raw_analysis' => [
+                    'source' => 'rule_based',
+                    'reason' => 'Unable to read screenshot file.',
+                ],
+            ];
         }
-
-        $contents = Storage::disk('public')
-            ->get($screenshot->file_path);
-
 
         /*
         |--------------------------------------------------------------------------
-        | Convert image to base64
+        | Convert image to Base64
         |--------------------------------------------------------------------------
         */
 
-        $base64 = base64_encode(
-            $contents
-        );
-
+        $base64 = base64_encode($contents);
 
         /*
         |--------------------------------------------------------------------------
-        | Vision AI prompt
+        | Vision AI prompts
         |--------------------------------------------------------------------------
         */
 
         $systemPrompt = <<<'PROMPT'
-
 You are an account recovery screenshot analysis assistant.
 
 Analyze only information that is actually visible in the screenshot.
@@ -99,12 +141,9 @@ The JSON must have exactly these fields:
 }
 
 The confidence value must be between 0 and 100.
-
 PROMPT;
 
-
         $userPrompt = <<<'PROMPT'
-
 Analyze this account recovery screenshot.
 
 Determine whether the visible screen indicates:
@@ -121,70 +160,118 @@ Extract the important visible message.
 Do not infer information that cannot be seen.
 
 Return ONLY JSON.
-
 PROMPT;
 
-
         /*
         |--------------------------------------------------------------------------
-        | Call Ollama Vision AI
+        | Try Vision AI
         |--------------------------------------------------------------------------
         */
 
-        $response = $this->aiClient->generateWithImages(
-            $systemPrompt,
-            $userPrompt,
-            [$base64]
-        );
+        try {
 
-
-        /*
-        |--------------------------------------------------------------------------
-        | Decode JSON
-        |--------------------------------------------------------------------------
-        */
-
-        $analysis = json_decode(
-            $response,
-            true
-        );
-
-
-        if (!is_array($analysis)) {
-            throw new RuntimeException(
-                'Vision AI returned invalid JSON.'
+            Log::info(
+                'Attempting screenshot vision analysis.',
+                [
+                    'screenshot_id' => $screenshot->id,
+                ]
             );
-        }
 
+            $response = $this->aiClient->generateWithImages(
+                $systemPrompt,
+                $userPrompt,
+                [$base64]
+            );
 
-        /*
-        |--------------------------------------------------------------------------
-        | Normalize result
-        |--------------------------------------------------------------------------
-        */
+            /*
+            |--------------------------------------------------------------------------
+            | Decode JSON
+            |--------------------------------------------------------------------------
+            */
 
-        return [
-            'detected_issue' =>
-                $analysis['detected_issue'] ?? 'unknown',
+            $analysis = json_decode(
+                $response,
+                true
+            );
 
-            'visible_message' =>
-                $analysis['visible_message'] ?? null,
+            if (
+                json_last_error() !== JSON_ERROR_NONE ||
+                !is_array($analysis)
+            ) {
+                throw new RuntimeException(
+                    'Vision AI returned invalid JSON.'
+                );
+            }
 
-            'possible_reason' =>
-                $analysis['possible_reason'] ?? null,
+            /*
+            |--------------------------------------------------------------------------
+            | Normalize AI result
+            |--------------------------------------------------------------------------
+            */
 
-            'confidence' =>
-                max(
-                    0,
-                    min(
-                        100,
-                        (int) (
-                            $analysis['confidence'] ?? 0
+            return [
+                'detected_issue' =>
+                    $analysis['detected_issue'] ?? 'unknown',
+
+                'visible_message' =>
+                    $analysis['visible_message'] ?? null,
+
+                'possible_reason' =>
+                    $analysis['possible_reason'] ?? null,
+
+                'confidence' =>
+                    max(
+                        0,
+                        min(
+                            100,
+                            (int) (
+                                $analysis['confidence'] ?? 0
+                            )
                         )
-                    )
-                ),
+                    ),
 
-            'raw_analysis' => $analysis,
-        ];
+                'raw_analysis' => $analysis,
+            ];
+
+        } catch (\Throwable $e) {
+
+            /*
+            |--------------------------------------------------------------------------
+            | IMPORTANT
+            |--------------------------------------------------------------------------
+            |
+            | Ollama/Vision AI failed.
+            |
+            | Do NOT throw the exception.
+            |
+            | Returning a fallback result allows AnalyzeCaseJob
+            | to continue to the normal case analysis.
+            |
+            */
+
+            Log::warning(
+                'Screenshot vision AI unavailable. Continuing with fallback.',
+                [
+                    'screenshot_id' => $screenshot->id,
+                    'error' => $e->getMessage(),
+                ]
+            );
+
+            return [
+                'detected_issue' => 'unknown',
+
+                'visible_message' => null,
+
+                'possible_reason' => null,
+
+                'confidence' => 0,
+
+                'raw_analysis' => [
+                    'source' => 'rule_based',
+                    'reason' => 'Vision AI unavailable.',
+                    'error' => $e->getMessage(),
+                ],
+            ];
+        }
     }
 }

@@ -6,6 +6,7 @@ use App\Models\Evidence;
 use App\Models\RecoveryCase;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Gate;
 
 class EvidenceController extends Controller
 {
@@ -22,12 +23,12 @@ class EvidenceController extends Controller
         | Make sure this evidence belongs to this case
         |--------------------------------------------------------------------------
         */
+        Gate::authorize('update', $case);
 
         abort_unless(
             $evidence->recovery_case_id === $case->id,
             404
         );
-
 
         /*
         |--------------------------------------------------------------------------

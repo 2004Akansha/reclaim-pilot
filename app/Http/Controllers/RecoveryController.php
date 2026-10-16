@@ -7,6 +7,7 @@ use App\Services\AppealGeneratorService;
 use App\Services\RecoveryRecommendationService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
+use Illuminate\Support\Facades\Gate;
 
 class RecoveryController extends Controller
 {
@@ -17,6 +18,8 @@ class RecoveryController extends Controller
         RecoveryCase $case,
         RecoveryRecommendationService $recommendationService
     ): View {
+
+        Gate::authorize('view', $case);
 
         /*
         |--------------------------------------------------------------------------
@@ -97,6 +100,8 @@ class RecoveryController extends Controller
         RecoveryCase $case,
         AppealGeneratorService $appealGenerator
     ): RedirectResponse {
+
+        Gate::authorize('update', $case);
 
         try {
 

@@ -4,18 +4,45 @@
 
 @section('content')
 
-    <x-stepper :current-step="1" />
+<x-case-shell
+    :current-step="1"
+>
 
 
-    {{-- Page heading --}}
+    {{-- ========================================================= --}}
+    {{-- PAGE INTRO --}}
+    {{-- ========================================================= --}}
 
-    <div class="mb-8">
+    <div class="mb-10">
 
-        <h1 class="text-3xl sm:text-4xl font-bold tracking-tight text-gray-900">
+        <span class="section-label">
+            Step 01 · Diagnose
+        </span>
+
+
+        <h1
+            class="
+                mt-5
+                text-3xl
+                font-bold
+                tracking-tight
+                text-gray-950
+                sm:text-4xl
+            "
+        >
             Let's understand your case
         </h1>
 
-        <p class="mt-3 text-gray-500 max-w-2xl leading-7">
+
+        <p
+            class="
+                mt-4
+                max-w-2xl
+                text-base
+                leading-7
+                text-gray-500
+            "
+        >
             Share a few details about what happened.
             The more information you provide, the better we can help
             you prepare your recovery request.
@@ -24,91 +51,178 @@
     </div>
 
 
-    {{-- Validation errors --}}
+
+    {{-- ========================================================= --}}
+    {{-- VALIDATION ERRORS --}}
+    {{-- ========================================================= --}}
 
     @if ($errors->any())
 
         <div
-            class="mb-6 rounded-2xl border border-red-200 bg-red-50 p-5"
+            class="
+                mb-10
+                rounded-xl
+                border
+                border-red-200
+                bg-red-50
+                p-5
+            "
         >
 
-            <p class="font-semibold text-red-800 mb-2">
-                Please fix the following:
-            </p>
+            <div class="flex gap-3">
 
-            <ul class="list-disc list-inside text-sm text-red-700 space-y-1">
+                <div class="shrink-0 text-red-600">
 
-                @foreach ($errors->all() as $error)
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke-width="1.8"
+                        stroke="currentColor"
+                        class="h-5 w-5"
+                    >
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M12 9v3.75m0 3.75h.008M10.29 3.86l-7.2 12.48A2 2 0 004.82 19h14.36a2 2 0 001.73-2.66l-7.2-12.48a2 2 0 00-3.46 0z"
+                        />
+                    </svg>
 
-                    <li>
-                        {{ $error }}
-                    </li>
+                </div>
 
-                @endforeach
 
-            </ul>
+                <div>
+
+                    <p class="font-semibold text-red-800">
+                        Please fix the following:
+                    </p>
+
+
+                    <ul
+                        class="
+                            mt-2
+                            list-disc
+                            space-y-1
+                            pl-5
+                            text-sm
+                            text-red-700
+                        "
+                    >
+
+                        @foreach ($errors->all() as $error)
+
+                            <li>
+                                {{ $error }}
+                            </li>
+
+                        @endforeach
+
+                    </ul>
+
+                </div>
+
+            </div>
 
         </div>
 
     @endif
 
 
+
+    {{-- ========================================================= --}}
+    {{-- MAIN FORM --}}
+    {{-- ========================================================= --}}
+
     <form
         method="POST"
         action="{{ route('case.store') }}"
         enctype="multipart/form-data"
-        class="space-y-6"
     >
 
         @csrf
 
 
-        {{-- Issue --}}
 
-        <section class="bg-white border border-gray-200 rounded-2xl p-6 card-shadow">
+        {{-- ===================================================== --}}
+        {{-- ISSUE TYPE --}}
+        {{-- ===================================================== --}}
 
-            <h2 class="text-lg font-semibold">
+        <section class="document-section mb-12">
+
+            <span class="document-marker"></span>
+
+
+            <div class="section-label">
+                Account problem
+            </div>
+
+
+            <h2
+                class="
+                    mt-4
+                    text-2xl
+                    font-bold
+                    tracking-tight
+                    text-gray-950
+                "
+            >
                 What seems to be the issue?
             </h2>
 
-            <p class="text-sm text-gray-500 mt-1">
+
+            <p class="mt-2 text-sm leading-6 text-gray-500">
                 Select the option that best describes your problem.
             </p>
 
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-5">
 
-                @php
+            @php
 
-                    $issues = [
-                        [
-                            'value' => 'account_disabled',
-                            'title' => 'Account disabled',
-                            'description' => 'My account has been disabled',
-                            'icon' => '🔒',
-                        ],
-                        [
-                            'value' => 'hacked_account',
-                            'title' => 'Hacked account',
-                            'description' => 'Someone accessed my account',
-                            'icon' => '🛡️',
-                        ],
-                        [
-                            'value' => 'cant_login',
-                            'title' => "Can't log in",
-                            'description' => 'I cannot access my account',
-                            'icon' => '🔑',
-                        ],
-                        [
-                            'value' => 'other',
-                            'title' => 'Other issue',
-                            'description' => 'Something else is wrong',
-                            'icon' => '⚠️',
-                        ],
-                    ];
+                $issues = [
 
-                @endphp
+                    [
+                        'value' => 'account_disabled',
+                        'title' => 'Account disabled',
+                        'description' => 'My account has been disabled',
+                        'icon' => '🔒',
+                    ],
 
+                    [
+                        'value' => 'hacked_account',
+                        'title' => 'Hacked account',
+                        'description' => 'Someone accessed my account',
+                        'icon' => '🛡️',
+                    ],
+
+                    [
+                        'value' => 'cant_login',
+                        'title' => "Can't log in",
+                        'description' => 'I cannot access my account',
+                        'icon' => '🔑',
+                    ],
+
+                    [
+                        'value' => 'other',
+                        'title' => 'Other issue',
+                        'description' => 'Something else is wrong',
+                        'icon' => '⚠️',
+                    ],
+
+                ];
+
+            @endphp
+
+
+
+            <div
+                class="
+                    mt-6
+                    grid
+                    grid-cols-1
+                    gap-3
+                    sm:grid-cols-2
+                "
+            >
 
                 @foreach($issues as $issue)
 
@@ -123,37 +237,71 @@
                             required
                         >
 
+
                         <div
                             class="
                                 rounded-xl
                                 border
                                 border-gray-200
+                                bg-white
                                 p-5
                                 transition
-                                hover:border-emerald-300
-                                hover:bg-emerald-50/30
-                                peer-checked:border-emerald-500
-                                peer-checked:bg-emerald-50
-                                peer-checked:ring-2
-                                peer-checked:ring-emerald-100
+
+                                hover:border-[#111d8f]
+                                hover:bg-[#fafaff]
+
+                                peer-checked:border-[#111d8f]
+                                peer-checked:bg-[#f5f5ff]
+
+                                peer-checked:ring-1
+                                peer-checked:ring-[#111d8f]
                             "
                         >
 
-                            <div class="flex items-center gap-4">
+                            <div class="flex items-start gap-4">
+
+
+                                {{-- Icon --}}
 
                                 <div
-                                    class="w-11 h-11 rounded-xl bg-gray-50 flex items-center justify-center text-xl"
+                                    class="
+                                        flex
+                                        h-10
+                                        w-10
+                                        shrink-0
+                                        items-center
+                                        justify-center
+                                        rounded-lg
+                                        bg-[#f1f1f8]
+                                        text-lg
+                                    "
                                 >
                                     {{ $issue['icon'] }}
                                 </div>
 
+
+                                {{-- Text --}}
+
                                 <div>
 
-                                    <div class="font-semibold text-gray-900">
+                                    <div
+                                        class="
+                                            font-semibold
+                                            text-gray-950
+                                        "
+                                    >
                                         {{ $issue['title'] }}
                                     </div>
 
-                                    <div class="text-sm text-gray-500 mt-1">
+
+                                    <div
+                                        class="
+                                            mt-1
+                                            text-sm
+                                            leading-5
+                                            text-gray-500
+                                        "
+                                    >
                                         {{ $issue['description'] }}
                                     </div>
 
@@ -172,33 +320,51 @@
         </section>
 
 
-        {{-- Description --}}
 
-        <section class="bg-white border border-gray-200 rounded-2xl p-6 card-shadow">
+        {{-- ===================================================== --}}
+        {{-- DESCRIPTION --}}
+        {{-- ===================================================== --}}
 
-            <div class="flex items-start justify-between gap-4">
+        <section class="document-section mb-12">
 
-                <div>
+            <span class="document-marker document-marker-olive"></span>
 
-                    <h2 class="text-lg font-semibold">
 
-                        Tell us more
+            <div class="section-label">
+                Account details
+            </div>
 
-                        <span class="text-sm font-normal text-gray-400">
-                            (optional)
-                        </span>
 
-                    </h2>
+            <div
+                class="
+                    mt-5
+                    flex
+                    items-center
+                    justify-between
+                    gap-4
+                "
+            >
 
-                    <p class="text-sm text-gray-500 mt-1">
-                        Describe what happened in your own words.
-                    </p>
+                <h2
+                    class="
+                        text-2xl
+                        font-bold
+                        tracking-tight
+                        text-gray-950
+                    "
+                >
+                    Tell us more
+                </h2>
 
-                </div>
 
                 <span
                     id="descriptionCounter"
-                    class="text-xs text-gray-400 whitespace-nowrap"
+                    class="
+                        whitespace-nowrap
+                        text-xs
+                        font-medium
+                        text-gray-400
+                    "
                 >
                     0/500
                 </span>
@@ -206,56 +372,162 @@
             </div>
 
 
+            <p class="mt-2 text-sm leading-6 text-gray-500">
+                Describe what happened in your own words.
+            </p>
+
+
             <textarea
                 id="description"
                 name="description"
-                rows="5"
+                rows="6"
                 maxlength="500"
                 placeholder="Example: My account was disabled after a notification appeared, but I believe this was a mistake..."
-                class="mt-4 w-full rounded-xl border border-gray-200 px-4 py-3 text-sm outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 resize-none"
+                class="
+                    mt-5
+                    w-full
+                    resize-none
+                    border-0
+                    border-b
+                    border-gray-300
+                    bg-transparent
+                    px-0
+                    py-3
+                    text-sm
+                    leading-7
+                    outline-none
+                    placeholder:text-gray-300
+                    focus:border-[#111d8f]
+                    focus:ring-0
+                "
             >{{ old('description') }}</textarea>
 
         </section>
 
 
-        {{-- Screenshots --}}
 
-        <section class="bg-white border border-gray-200 rounded-2xl p-6 card-shadow">
+        {{-- ===================================================== --}}
+        {{-- SCREENSHOTS --}}
+        {{-- ===================================================== --}}
 
-            <h2 class="text-lg font-semibold">
+        <section class="document-section mb-12">
 
+            <span class="document-marker"></span>
+
+
+            <div class="section-label">
+                Supporting evidence
+            </div>
+
+
+            <h2
+                class="
+                    mt-5
+                    text-2xl
+                    font-bold
+                    tracking-tight
+                    text-gray-950
+                "
+            >
                 Upload screenshots
-
-                <span class="text-sm font-normal text-gray-400">
-                    (optional)
-                </span>
-
             </h2>
 
-            <p class="text-sm text-gray-500 mt-1">
-                Upload screenshots that help explain your case.
+
+            <p
+                class="
+                    mt-2
+                    max-w-2xl
+                    text-sm
+                    leading-6
+                    text-gray-500
+                "
+            >
+                Upload screenshots that help explain the problem.
+                Vision AI can use them as supporting evidence during analysis.
             </p>
 
 
-            <input
-                id="screenshots"
-                type="file"
-                name="screenshots[]"
-                multiple
-                accept=".jpg,.jpeg,.png,.webp,.pdf"
-                class="mt-5 block w-full text-sm text-gray-500
-                       file:mr-4 file:py-2 file:px-4
-                       file:rounded-lg file:border-0
-                       file:text-sm file:font-medium
-                       file:bg-emerald-50
-                       file:text-emerald-700
-                       hover:file:bg-emerald-100"
+
+            {{-- Upload area --}}
+
+            <label
+                for="screenshots"
+                class="
+                    mt-6
+                    flex
+                    cursor-pointer
+                    flex-col
+                    items-center
+                    justify-center
+                    rounded-xl
+                    border
+                    border-dashed
+                    border-gray-300
+                    bg-gray-50
+                    px-6
+                    py-10
+                    text-center
+                    transition
+                    hover:border-[#111d8f]
+                    hover:bg-[#fafaff]
+                "
             >
 
-            <p class="mt-2 text-xs text-gray-400">
-                PNG, JPG or PDF. Maximum 10 MB per file.
-            </p>
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke-width="1.5"
+                    stroke="currentColor"
+                    class="h-8 w-8 text-[#111d8f]"
+                >
 
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M12 16V4m0 0L8 8m4-4l4 4M5 12v6a2 2 0 002 2h10a2 2 0 002-2v-6"
+                    />
+
+                </svg>
+
+
+                <span
+                    class="
+                        mt-3
+                        text-sm
+                        font-semibold
+                        text-gray-800
+                    "
+                >
+                    Choose screenshots
+                </span>
+
+
+                <span
+                    class="
+                        mt-1
+                        text-xs
+                        text-gray-400
+                    "
+                >
+                    PNG, JPG, WEBP or PDF · Maximum 10 MB per file
+                </span>
+
+
+                <input
+                    id="screenshots"
+                    type="file"
+                    name="screenshots[]"
+                    multiple
+                    accept=".jpg,.jpeg,.png,.webp,.pdf"
+                    class="sr-only"
+                >
+
+            </label>
+
+
+
+            {{-- Selected files --}}
 
             <div
                 id="selectedFiles"
@@ -265,31 +537,70 @@
         </section>
 
 
-        {{-- Account details --}}
 
-        <section class="bg-white border border-gray-200 rounded-2xl p-6 card-shadow">
+        {{-- ===================================================== --}}
+        {{-- ACCOUNT INFORMATION --}}
+        {{-- ===================================================== --}}
 
-            <h2 class="text-lg font-semibold">
+        <section class="document-section mb-12">
 
+            <span class="document-marker document-marker-olive"></span>
+
+
+            <div class="section-label">
+                Account information
+            </div>
+
+
+            <h2
+                class="
+                    mt-5
+                    text-2xl
+                    font-bold
+                    tracking-tight
+                    text-gray-950
+                "
+            >
                 Account details
-
-                <span class="text-sm font-normal text-gray-400">
-                    (optional)
-                </span>
-
             </h2>
 
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mt-5">
+            <p class="mt-2 text-sm leading-6 text-gray-500">
+                These details can help us prepare more relevant
+                recovery guidance.
+            </p>
+
+
+
+            {{-- Username + Email --}}
+
+            <div
+                class="
+                    mt-7
+                    grid
+                    grid-cols-1
+                    gap-6
+                    md:grid-cols-2
+                "
+            >
+
+                {{-- Username --}}
 
                 <div>
 
                     <label
                         for="username"
-                        class="block text-sm font-medium text-gray-700 mb-2"
+                        class="
+                            text-xs
+                            font-bold
+                            uppercase
+                            tracking-wide
+                            text-gray-500
+                        "
                     >
                         Username
                     </label>
+
 
                     <input
                         id="username"
@@ -297,20 +608,44 @@
                         name="username"
                         value="{{ old('username') }}"
                         placeholder="@yourusername"
-                        class="w-full rounded-xl border border-gray-200 px-4 py-3 text-sm outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
+                        class="
+                            mt-2
+                            w-full
+                            border-0
+                            border-b
+                            border-gray-300
+                            bg-transparent
+                            px-0
+                            py-3
+                            text-sm
+                            outline-none
+                            placeholder:text-gray-300
+                            focus:border-[#111d8f]
+                            focus:ring-0
+                        "
                     >
 
                 </div>
 
 
+
+                {{-- Email --}}
+
                 <div>
 
                     <label
                         for="email"
-                        class="block text-sm font-medium text-gray-700 mb-2"
+                        class="
+                            text-xs
+                            font-bold
+                            uppercase
+                            tracking-wide
+                            text-gray-500
+                        "
                     >
                         Email linked to account
                     </label>
+
 
                     <input
                         id="email"
@@ -318,7 +653,21 @@
                         name="email"
                         value="{{ old('email') }}"
                         placeholder="you@example.com"
-                        class="w-full rounded-xl border border-gray-200 px-4 py-3 text-sm outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
+                        class="
+                            mt-2
+                            w-full
+                            border-0
+                            border-b
+                            border-gray-300
+                            bg-transparent
+                            px-0
+                            py-3
+                            text-sm
+                            outline-none
+                            placeholder:text-gray-300
+                            focus:border-[#111d8f]
+                            focus:ring-0
+                        "
                     >
 
                 </div>
@@ -326,24 +675,48 @@
             </div>
 
 
-            <div class="mt-5">
+
+            {{-- Account type --}}
+
+            <div class="mt-8">
 
                 <label
                     for="account_type"
-                    class="block text-sm font-medium text-gray-700 mb-2"
+                    class="
+                        text-xs
+                        font-bold
+                        uppercase
+                        tracking-wide
+                        text-gray-500
+                    "
                 >
                     Account type
                 </label>
 
+
                 <select
                     id="account_type"
                     name="account_type"
-                    class="w-full rounded-xl border border-gray-200 px-4 py-3 text-sm bg-white outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
+                    class="
+                        mt-2
+                        w-full
+                        border-0
+                        border-b
+                        border-gray-300
+                        bg-transparent
+                        px-0
+                        py-3
+                        text-sm
+                        outline-none
+                        focus:border-[#111d8f]
+                        focus:ring-0
+                    "
                 >
 
                     <option value="">
                         Select account type
                     </option>
+
 
                     <option
                         value="personal"
@@ -352,12 +725,14 @@
                         Personal account
                     </option>
 
+
                     <option
                         value="business"
                         {{ old('account_type') === 'business' ? 'selected' : '' }}
                     >
                         Business account
                     </option>
+
 
                     <option
                         value="creator"
@@ -373,28 +748,58 @@
         </section>
 
 
-        {{-- Continue --}}
 
-        <div class="pt-2">
+        {{-- ===================================================== --}}
+        {{-- SUBMIT --}}
+        {{-- ===================================================== --}}
+
+        <div
+            class="
+                flex
+                justify-end
+                border-t
+                border-gray-200
+                pt-7
+            "
+        >
 
             <button
                 type="submit"
-                class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-4 rounded-xl transition flex items-center justify-center gap-2"
+                class="
+                    inline-flex
+                    items-center
+                    gap-3
+                    rounded-lg
+                    bg-[#111d8f]
+                    px-6
+                    py-3.5
+                    text-sm
+                    font-semibold
+                    text-white
+                    transition
+                    hover:bg-[#0b146d]
+                    focus:outline-none
+                    focus:ring-2
+                    focus:ring-[#111d8f]
+                    focus:ring-offset-2
+                "
             >
 
                 Continue to analysis
 
+
                 <svg
-                    class="w-5 h-5"
+                    xmlns="http://www.w3.org/2000/svg"
                     fill="none"
-                    stroke="currentColor"
                     viewBox="0 0 24 24"
+                    stroke-width="1.8"
+                    stroke="currentColor"
+                    class="h-4 w-4"
                 >
 
                     <path
                         stroke-linecap="round"
                         stroke-linejoin="round"
-                        stroke-width="2"
                         d="M5 12h14m-6-6l6 6-6 6"
                     />
 
@@ -406,18 +811,33 @@
 
     </form>
 
+
+</x-case-shell>
+
 @endsection
 
+
+
+{{-- ============================================================= --}}
+{{-- JAVASCRIPT --}}
+{{-- ============================================================= --}}
 
 @push('scripts')
 
 <script>
+
+    /*
+    |--------------------------------------------------------------------------
+    | Description character counter
+    |--------------------------------------------------------------------------
+    */
 
     const description =
         document.getElementById('description');
 
     const descriptionCounter =
         document.getElementById('descriptionCounter');
+
 
     if (description && descriptionCounter) {
 
@@ -428,20 +848,31 @@
 
         }
 
+
         description.addEventListener(
             'input',
             updateCounter
         );
 
+
         updateCounter();
+
     }
 
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Screenshot selection
+    |--------------------------------------------------------------------------
+    */
 
     const screenshotInput =
         document.getElementById('screenshots');
 
     const selectedFiles =
         document.getElementById('selectedFiles');
+
 
     if (screenshotInput && selectedFiles) {
 
@@ -451,35 +882,152 @@
 
                 selectedFiles.innerHTML = '';
 
-                Array.from(this.files).forEach(
+
+                const files =
+                    Array.from(this.files);
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | No files
+                |--------------------------------------------------------------------------
+                */
+
+                if (files.length === 0) {
+
+                    return;
+
+                }
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | Maximum 5 files
+                |--------------------------------------------------------------------------
+                */
+
+                if (files.length > 5) {
+
+                    const warning =
+                        document.createElement('div');
+
+                    warning.className =
+                        'rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-700';
+
+                    warning.textContent =
+                        'You can upload a maximum of 5 screenshots.';
+
+                    selectedFiles.appendChild(
+                        warning
+                    );
+
+                }
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | Display selected files
+                |--------------------------------------------------------------------------
+                */
+
+                files.slice(0, 5).forEach(
                     function (file) {
 
                         const item =
                             document.createElement('div');
 
+
                         item.className =
-                            'flex items-center justify-between bg-gray-50 border border-gray-100 rounded-lg px-4 py-3 text-sm';
+                            'flex items-center justify-between gap-4 rounded-lg border border-gray-200 bg-white px-4 py-3 text-sm';
+
+
+
+                        const left =
+                            document.createElement('div');
+
+
+                        left.className =
+                            'flex min-w-0 items-center gap-3';
+
+
+
+                        /*
+                        | File icon
+                        */
+
+                        const icon =
+                            document.createElement('div');
+
+
+                        icon.className =
+                            'flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-[#f1f1f8] text-[#111d8f]';
+
+
+
+                        icon.innerHTML =
+                            `
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke-width="1.7"
+                                    stroke="currentColor"
+                                    class="h-4 w-4"
+                                >
+                                    <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        d="M12 16V4m0 0L8 8m4-4l4 4M5 12v6a2 2 0 002 2h10a2 2 0 002-2v-6"
+                                    />
+                                </svg>
+                            `;
+
+
+
+                        /*
+                        | File name
+                        */
 
                         const name =
                             document.createElement('span');
 
+
                         name.className =
-                            'truncate';
+                            'truncate font-medium text-gray-800';
+
 
                         name.textContent =
                             file.name;
 
+
+
+                        left.appendChild(icon);
+
+                        left.appendChild(name);
+
+
+
+                        /*
+                        | File size
+                        */
+
                         const size =
                             document.createElement('span');
 
+
                         size.className =
-                            'text-xs text-gray-400 ml-4 whitespace-nowrap';
+                            'shrink-0 text-xs text-gray-400';
+
 
                         size.textContent =
                             `${(file.size / 1024 / 1024).toFixed(2)} MB`;
 
-                        item.appendChild(name);
+
+
+                        item.appendChild(left);
+
                         item.appendChild(size);
+
 
                         selectedFiles.appendChild(item);
 

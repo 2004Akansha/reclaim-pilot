@@ -4,172 +4,335 @@
 
 @section('content')
 
-    <x-stepper :current-step="3" />
+    {{-- ========================================================= --}}
+    {{-- CASE SHELL --}}
+    {{-- ========================================================= --}}
 
-    {{-- Success message --}}
+    <x-case-shell
+        :current-step="3"
+        :case="$case"
+    >
 
-    @if(session('success'))
+        {{-- ===================================================== --}}
+        {{-- FLASH MESSAGES --}}
+        {{-- ===================================================== --}}
 
-        <div class="mb-6 rounded-xl border border-emerald-200 bg-emerald-50 p-4">
+        @if(session('success'))
 
-            <p class="text-sm font-medium text-emerald-800">
+            <div
+                class="
+                    mb-8
+                    border
+                    border-[#dfe2c8]
+                    bg-[#f7f7ec]
+                    px-5
+                    py-4
+                "
+            >
 
-                {{ session('success') }}
+                <p class="text-sm font-medium text-[#5d6032]">
+                    {{ session('success') }}
+                </p>
 
+            </div>
+
+        @endif
+
+
+        @if(session('error'))
+
+            <div
+                class="
+                    mb-8
+                    border
+                    border-red-200
+                    bg-red-50
+                    px-5
+                    py-4
+                "
+            >
+
+                <p class="text-sm font-semibold text-red-800">
+                    Something went wrong
+                </p>
+
+                <p class="mt-1 text-sm text-red-700">
+                    {{ session('error') }}
+                </p>
+
+            </div>
+
+        @endif
+
+
+        {{-- ===================================================== --}}
+        {{-- VALIDATION ERRORS --}}
+        {{-- ===================================================== --}}
+
+        @if($errors->any())
+
+            <div
+                class="
+                    mb-8
+                    border
+                    border-red-200
+                    bg-red-50
+                    px-5
+                    py-4
+                "
+            >
+
+                <p class="font-semibold text-red-800">
+                    Please fix the following:
+                </p>
+
+
+                <ul
+                    class="
+                        mt-2
+                        list-inside
+                        list-disc
+                        text-sm
+                        text-red-700
+                    "
+                >
+
+                    @foreach($errors->all() as $error)
+
+                        <li>
+                            {{ $error }}
+                        </li>
+
+                    @endforeach
+
+                </ul>
+
+            </div>
+
+        @endif
+
+
+        {{-- ===================================================== --}}
+        {{-- PAGE HEADING --}}
+        {{-- ===================================================== --}}
+
+        <div class="mb-12">
+
+            <span class="section-label">
+                Step 03 · Preparation
+            </span>
+
+
+            <h1
+                class="
+                    mt-5
+                    text-4xl
+                    font-bold
+                    tracking-tight
+                    text-gray-950
+                "
+            >
+                Prepare your recovery case
+            </h1>
+
+
+            <p
+                class="
+                    mt-4
+                    max-w-2xl
+                    text-base
+                    leading-7
+                    text-gray-500
+                "
+            >
+                Review your case, complete the evidence checklist,
+                and prepare a clear appeal before using the official
+                recovery process.
             </p>
 
         </div>
 
-    @endif
 
-    @if(session('error'))
+        {{-- ===================================================== --}}
+        {{-- IDENTIFIED ISSUE --}}
+        {{-- ===================================================== --}}
 
-    <div class="mb-6 rounded-xl border border-red-200 bg-red-50 p-4">
+        <section class="document-section mb-12">
 
-        <p class="text-sm font-semibold text-red-800">
-            Something went wrong
-        </p>
-
-        <p class="text-sm text-red-700 mt-1">
-            {{ session('error') }}
-        </p>
-
-    </div>
-
-@endif
-
-        {{-- Validation errors --}}
-
-    @if($errors->any())
-
-        <div class="mb-6 rounded-xl border border-red-200 bg-red-50 p-4">
-
-            <p class="font-semibold text-red-800">
-
-                Please fix the following:
-
-            </p>
+            <span class="document-marker"></span>
 
 
-            <ul class="mt-2 list-disc list-inside text-sm text-red-700">
-
-                @foreach($errors->all() as $error)
-
-                    <li>
-                        {{ $error }}
-                    </li>
-
-                @endforeach
-
-            </ul>
-
-        </div>
-
-    @endif
+            <div class="section-label">
+                Identified issue
+            </div>
 
 
-    {{-- Heading --}}
+            <h2
+                class="
+                    mt-5
+                    text-2xl
+                    font-bold
+                    tracking-tight
+                    text-gray-950
+                "
+            >
 
-    <div class="mb-8">
+                @switch($case->issue_type)
 
-        <h1 class="text-3xl sm:text-4xl font-bold tracking-tight">
-            Prepare your recovery case
-        </h1>
+                    @case('account_disabled')
+                        Account disabled
+                        @break
 
-        <p class="mt-3 text-gray-500 max-w-2xl leading-7">
-            Review your case, complete the evidence checklist,
-            and prepare a clear appeal draft before using the
-            official recovery process.
-        </p>
+                    @case('hacked_account')
+                        Hacked account
+                        @break
 
-    </div>
+                    @case('cant_login')
+                        Can't log in
+                        @break
 
-    <div class="grid grid-cols-1 lg:grid-cols-[1.4fr_0.8fr] gap-6">
+                    @case('other')
+                        Other account issue
+                        @break
+
+                    @default
+                        Account issue
+
+                @endswitch
+
+            </h2>
 
 
-        {{-- LEFT COLUMN --}}
+            @if($case->possible_reason)
 
-        <div class="space-y-6">
+                <p
+                    class="
+                        mt-3
+                        max-w-2xl
+                        text-sm
+                        leading-6
+                        text-gray-500
+                    "
+                >
+                    {{ $case->possible_reason }}
+                </p>
+
+            @endif
 
 
-            {{-- Identified issue --}}
+            {{-- Case details --}}
 
-            <section class="bg-white border border-gray-200 rounded-2xl p-6 card-shadow">
+            <div
+                class="
+                    mt-6
+                    grid
+                    grid-cols-1
+                    gap-3
+                    sm:grid-cols-2
+                "
+            >
 
-                <div class="flex items-start gap-4">
+                <div
+                    class="
+                        border
+                        border-gray-200
+                        bg-[#fafafa]
+                        px-4
+                        py-3
+                    "
+                >
 
                     <div
-                        class="w-11 h-11 rounded-xl bg-emerald-50 flex items-center justify-center text-xl"
+                        class="
+                            text-[10px]
+                            font-bold
+                            uppercase
+                            tracking-[0.14em]
+                            text-gray-400
+                        "
                     >
-                        ✓
+                        Case ID
                     </div>
 
-                    <div>
-
-                        <div class="text-xs font-semibold uppercase tracking-wide text-emerald-700">
-                            Identified issue
-                        </div>
-
-                        <h2 class="text-xl font-bold mt-1">
-
-                            @switch($case->issue_type)
-
-                                @case('account_disabled')
-                                    Account disabled
-                                    @break
-
-                                @case('hacked_account')
-                                    Hacked account
-                                    @break
-
-                                @case('cant_login')
-                                    Can't log in
-                                    @break
-
-                                @case('other')
-                                    Other account issue
-                                    @break
-
-                                @default
-                                    Account issue
-
-                            @endswitch
-
-                        </h2>
-
-                        @if($case->possible_reason)
-
-                            <p class="text-sm text-gray-500 mt-2">
-                                {{ $case->possible_reason }}
-                            </p>
-
-                        @endif
-
+                    <div class="mt-1 text-sm font-semibold text-gray-900">
+                        #{{ $case->id }}
                     </div>
 
                 </div>
 
-            </section>
+
+                <div
+                    class="
+                        border
+                        border-gray-200
+                        bg-[#fafafa]
+                        px-4
+                        py-3
+                    "
+                >
+
+                    <div
+                        class="
+                            text-[10px]
+                            font-bold
+                            uppercase
+                            tracking-[0.14em]
+                            text-gray-400
+                        "
+                    >
+                        Account type
+                    </div>
+
+                    <div class="mt-1 text-sm font-semibold text-gray-900">
+                        {{ $case->account_type
+                            ? ucfirst($case->account_type)
+                            : 'Not provided' }}
+                    </div>
+
+                </div>
+
+            </div>
 
 
-{{-- Evidence Checklist --}}
+            @if($case->description)
 
-<section class="bg-white border border-gray-200 rounded-2xl p-6 card-shadow">
+                <div class="mt-5">
 
-    <div class="flex items-center justify-between gap-4">
+                    <div
+                        class="
+                            text-[10px]
+                            font-bold
+                            uppercase
+                            tracking-[0.14em]
+                            text-gray-400
+                        "
+                    >
+                        Your description
+                    </div>
 
-        <div>
 
-            <h2 class="text-lg font-semibold text-gray-900">
-                Evidence checklist
-            </h2>
+                    <p
+                        class="
+                            mt-2
+                            max-w-2xl
+                            text-sm
+                            leading-7
+                            text-gray-600
+                        "
+                    >
+                        {{ $case->description }}
+                    </p>
 
-            <p class="text-sm text-gray-500 mt-1">
-                Upload supporting documents for your recovery case.
-            </p>
+                </div>
 
-        </div>
+            @endif
 
+        </section>
+
+
+        {{-- ===================================================== --}}
+        {{-- EVIDENCE --}}
+        {{-- ===================================================== --}}
 
         @php
 
@@ -182,243 +345,429 @@
         @endphp
 
 
-        <div class="text-sm font-semibold text-emerald-700">
+        <section class="document-section mb-12">
 
-            {{ $completedEvidence }}/{{ $totalEvidence }}
-
-            complete
-
-        </div>
-
-    </div>
+            <span class="document-marker"></span>
 
 
-    <div class="mt-6 space-y-4">
+            <div class="flex items-start justify-between gap-6">
 
-        @forelse($case->evidence as $evidence)
+                <div>
 
-            <div
-                class="border border-gray-200 rounded-xl p-4"
-            >
-
-                <div class="flex items-start gap-4">
-
-
-                    {{-- Status icon --}}
-
-                    <div class="flex-shrink-0">
-
-                        @if($evidence->completed)
-
-                            <div
-                                class="w-9 h-9 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center font-semibold"
-                            >
-                                ✓
-                            </div>
-
-                        @else
-
-                            <div
-                                class="w-9 h-9 rounded-full border-2 border-gray-300 text-gray-400 flex items-center justify-center"
-                            >
-                                ○
-                            </div>
-
-                        @endif
-
+                    <div class="section-label">
+                        Evidence
                     </div>
 
 
-                    {{-- Evidence content --}}
-
-                    <div class="flex-1 min-w-0">
-
-                        <h3 class="font-semibold text-gray-900">
-
-                            {{ $evidence->title }}
-
-                        </h3>
-
-
-                        <p class="text-sm text-gray-500 mt-1">
-
-                            {{ $evidence->description }}
-
-                        </p>
+                    <h2
+                        class="
+                            mt-5
+                            text-2xl
+                            font-bold
+                            tracking-tight
+                            text-gray-950
+                        "
+                    >
+                        Evidence checklist
+                    </h2>
 
 
-                        {{-- Uploaded file information --}}
+                    <p
+                        class="
+                            mt-2
+                            max-w-2xl
+                            text-sm
+                            leading-6
+                            text-gray-500
+                        "
+                    >
+                        Upload supporting documents for your recovery case.
+                        Strong, relevant evidence can make your request clearer.
+                    </p>
 
-                        @if($evidence->file_path)
-
-                            <div
-                                class="mt-4 flex items-center justify-between gap-3 bg-emerald-50 border border-emerald-100 rounded-xl px-4 py-3"
-                            >
-
-                                <div class="min-w-0">
-
-                                    <p
-                                        class="text-sm font-medium text-emerald-800 truncate"
-                                    >
-
-                                        {{ $evidence->original_name }}
-
-                                    </p>
+                </div>
 
 
-                                    @if($evidence->file_size)
-
-                                        <p class="text-xs text-emerald-600 mt-1">
-
-                                            {{ number_format($evidence->file_size / 1024 / 1024, 2) }}
-                                            MB
-
-                                        </p>
-
-                                    @endif
-
-                                </div>
-
-
-                                <a
-                                    href="{{ asset('storage/' . $evidence->file_path) }}"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    class="text-sm font-medium text-emerald-700 hover:text-emerald-900 whitespace-nowrap"
-                                >
-                                    View
-                                </a>
-
-                            </div>
-
-                        @endif
-
-
-                        {{-- Upload form --}}
-
-                        <form
-                            method="POST"
-                            action="{{ route(
-                                'case.evidence.upload',
-                                [
-                                    'case' => $case,
-                                    'evidence' => $evidence
-                                ]
-                            ) }}"
-                            enctype="multipart/form-data"
-                            class="mt-4"
-                        >
-
-                            @csrf
-
-
-                            <div class="flex flex-col sm:flex-row gap-3">
-
-                                <input
-                                    type="file"
-                                    name="file"
-                                    accept=".jpg,.jpeg,.png,.webp,.pdf"
-                                    required
-                                    class="flex-1 text-sm text-gray-500
-                                           file:mr-4
-                                           file:py-2
-                                           file:px-4
-                                           file:rounded-lg
-                                           file:border-0
-                                           file:text-sm
-                                           file:font-medium
-                                           file:bg-emerald-50
-                                           file:text-emerald-700
-                                           hover:file:bg-emerald-100"
-                                >
-
-
-                                <button
-                                    type="submit"
-                                    class="px-5 py-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold transition"
-                                >
-
-                                    @if($evidence->file_path)
-
-                                        Replace file
-
-                                    @else
-
-                                        Upload
-
-                                    @endif
-
-                                </button>
-
-                            </div>
-
-
-                            <p class="text-xs text-gray-400 mt-2">
-
-                                JPG, PNG, WEBP or PDF.
-                                Maximum 10 MB.
-
-                            </p>
-
-                        </form>
-
-                    </div>
-
+                <div
+                    class="
+                        shrink-0
+                        text-sm
+                        font-semibold
+                        text-[#777943]
+                    "
+                >
+                    {{ $completedEvidence }}/{{ $totalEvidence }}
+                    complete
                 </div>
 
             </div>
 
-        @empty
 
-            <p class="py-4 text-sm text-gray-500">
+            {{-- ================================================= --}}
+            {{-- EVIDENCE TIMELINE --}}
+            {{-- ================================================= --}}
 
-                No evidence items have been added yet.
+            <div class="mt-8">
 
-            </p>
+                @forelse($case->evidence as $evidence)
 
-        @endforelse
+                    <div class="relative flex gap-5">
 
-    </div>
+                        {{-- Vertical timeline line --}}
 
-</section>
+                        @if(!$loop->last)
 
-            {{-- Appeal --}}
+                            <div
+                                class="
+                                    absolute
+                                    left-[7px]
+                                    top-5
+                                    bottom-0
+                                    w-px
+                                    bg-gray-200
+                                "
+                            ></div>
 
-            <section class="bg-white border border-gray-200 rounded-2xl p-6 card-shadow">
+                        @endif
 
-                <div class="flex items-start justify-between gap-4">
 
-                    <div>
+                        {{-- Timeline marker --}}
 
-                        <h2 class="text-lg font-semibold">
-                            Appeal draft
-                        </h2>
+                        <div class="relative z-10 shrink-0">
 
-                        <p class="text-sm text-gray-500 mt-1">
-                            Review and edit this draft before submitting it
-                            through the official recovery process.
-                        </p>
+                            @if($evidence->completed)
+
+                                <div
+                                    class="
+                                        flex
+                                        h-4
+                                        w-4
+                                        items-center
+                                        justify-center
+                                        rounded-full
+                                        bg-[#777943]
+                                        ring-4
+                                        ring-white
+                                    "
+                                >
+
+                                    <span class="text-[9px] text-white">
+                                        ✓
+                                    </span>
+
+                                </div>
+
+                            @else
+
+                                <div
+                                    class="
+                                        h-4
+                                        w-4
+                                        rounded-full
+                                        border-2
+                                        border-[#b04c4c]
+                                        bg-white
+                                    "
+                                ></div>
+
+                            @endif
+
+                        </div>
+
+
+                        {{-- Evidence content --}}
+
+                        <div class="min-w-0 flex-1 pb-10">
+
+                            <h3
+                                class="
+                                    text-base
+                                    font-bold
+                                    text-gray-950
+                                "
+                            >
+                                {{ $evidence->title }}
+                            </h3>
+
+
+                            <p
+                                class="
+                                    mt-2
+                                    max-w-xl
+                                    text-sm
+                                    leading-6
+                                    text-gray-500
+                                "
+                            >
+                                {{ $evidence->description }}
+                            </p>
+
+
+                            {{-- ================================= --}}
+                            {{-- Uploaded file --}}
+                            {{-- ================================= --}}
+
+                            @if($evidence->file_path)
+
+                                <div
+                                    class="
+                                        mt-5
+                                        flex
+                                        items-center
+                                        justify-between
+                                        gap-4
+                                        border
+                                        border-[#dfe2c8]
+                                        bg-[#f7f7ec]
+                                        px-4
+                                        py-3
+                                    "
+                                >
+
+                                    <div class="min-w-0">
+
+                                        <p
+                                            class="
+                                                truncate
+                                                text-sm
+                                                font-medium
+                                                text-[#5d6032]
+                                            "
+                                        >
+                                            {{ $evidence->original_name }}
+                                        </p>
+
+
+                                        @if($evidence->file_size)
+
+                                            <p
+                                                class="
+                                                    mt-1
+                                                    text-xs
+                                                    text-[#777943]
+                                                "
+                                            >
+                                                {{ number_format($evidence->file_size / 1024 / 1024, 2) }}
+                                                MB
+                                            </p>
+
+                                        @endif
+
+                                    </div>
+
+
+                                    <a
+                                        href="{{ asset('storage/' . $evidence->file_path) }}"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        class="
+                                            shrink-0
+                                            text-sm
+                                            font-semibold
+                                            text-[#111d8f]
+                                            hover:underline
+                                        "
+                                    >
+                                        View
+                                    </a>
+
+                                </div>
+
+                            @endif
+
+
+                            {{-- ================================= --}}
+                            {{-- Upload form --}}
+                            {{-- ================================= --}}
+
+                            <form
+                                method="POST"
+                                action="{{ route(
+                                    'case.evidence.upload',
+                                    [
+                                        'case' => $case,
+                                        'evidence' => $evidence
+                                    ]
+                                ) }}"
+                                enctype="multipart/form-data"
+                                class="mt-5"
+                            >
+
+                                @csrf
+
+
+                                <div
+                                    class="
+                                        flex
+                                        flex-col
+                                        gap-3
+                                        sm:flex-row
+                                        sm:items-center
+                                    "
+                                >
+
+                                    <input
+                                        type="file"
+                                        name="file"
+                                        accept=".jpg,.jpeg,.png,.webp,.pdf"
+                                        required
+                                        class="
+                                            min-w-0
+                                            flex-1
+                                            text-sm
+                                            text-gray-500
+
+                                            file:mr-4
+                                            file:rounded-md
+                                            file:border-0
+                                            file:bg-gray-100
+                                            file:px-4
+                                            file:py-2
+                                            file:text-sm
+                                            file:font-semibold
+                                            file:text-gray-700
+
+                                            hover:file:bg-gray-200
+                                        "
+                                    >
+
+
+                                    <button
+                                        type="submit"
+                                        class="
+                                            shrink-0
+                                            border
+                                            border-[#111d8f]
+                                            bg-[#111d8f]
+                                            px-5
+                                            py-2.5
+                                            text-sm
+                                            font-semibold
+                                            text-white
+                                            transition
+                                            hover:bg-[#0b146d]
+                                        "
+                                    >
+
+                                        @if($evidence->file_path)
+
+                                            Replace file
+
+                                        @else
+
+                                            Upload
+
+                                        @endif
+
+                                    </button>
+
+                                </div>
+
+
+                                <p
+                                    class="
+                                        mt-2
+                                        text-xs
+                                        text-gray-400
+                                    "
+                                >
+                                    JPG, PNG, WEBP or PDF.
+                                    Maximum 10 MB.
+                                </p>
+
+                            </form>
+
+                        </div>
 
                     </div>
 
-                    <span
-                        class="text-xs font-semibold bg-emerald-50 text-emerald-700 px-3 py-1.5 rounded-full"
-                    >
-                        Draft
-                    </span>
+                @empty
 
-                </div>
+                    <p class="py-4 text-sm text-gray-500">
+                        No evidence items have been added yet.
+                    </p>
+
+                @endforelse
+
+            </div>
+
+        </section>
 
 
-                @if($appeal)
+        {{-- ===================================================== --}}
+        {{-- APPEAL --}}
+        {{-- ===================================================== --}}
+
+        <section class="document-section mb-12">
+
+            <span class="document-marker"></span>
+
+
+            <div class="section-label">
+                Appeal
+            </div>
+
+
+            <h2
+                class="
+                    mt-5
+                    text-2xl
+                    font-bold
+                    tracking-tight
+                    text-gray-950
+                "
+            >
+                Appeal draft
+            </h2>
+
+
+            <p
+                class="
+                    mt-2
+                    max-w-2xl
+                    text-sm
+                    leading-6
+                    text-gray-500
+                "
+            >
+                Review and edit this draft before submitting it through
+                the official recovery process.
+            </p>
+
+
+            @if($appeal)
+
+                {{-- ============================================= --}}
+                {{-- Appeal document --}}
+                {{-- ============================================= --}}
+
+                <div class="mt-6">
 
                     <textarea
                         id="appealText"
-                        class="mt-5 w-full min-h-[340px] rounded-xl border border-gray-200 bg-gray-50 px-4 py-4 text-sm leading-7 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 resize-y"
+                        class="
+                            min-h-[360px]
+                            w-full
+                            resize-y
+                            border
+                            border-gray-200
+                            bg-[#fafafa]
+                            p-6
+                            text-sm
+                            leading-7
+                            text-gray-700
+                            outline-none
+                            transition
+                            focus:border-[#111d8f]
+                            focus:ring-1
+                            focus:ring-[#111d8f]
+                        "
                     >{{ $appeal->content }}</textarea>
 
 
-                    <div class="flex flex-wrap gap-3 mt-4">
+                    <div class="mt-4 flex flex-wrap gap-3">
+
+                        {{-- Regenerate --}}
 
                         <form
                             method="POST"
@@ -432,7 +781,18 @@
 
                             <button
                                 type="submit"
-                                class="px-4 py-2.5 rounded-lg bg-gray-100 hover:bg-gray-200 text-sm font-semibold text-gray-700"
+                                class="
+                                    border
+                                    border-gray-300
+                                    bg-white
+                                    px-5
+                                    py-2.5
+                                    text-sm
+                                    font-semibold
+                                    text-gray-700
+                                    transition
+                                    hover:bg-gray-50
+                                "
                             >
                                 Regenerate
                             </button>
@@ -440,164 +800,259 @@
                         </form>
 
 
+                        {{-- Copy --}}
+
                         <button
                             type="button"
                             onclick="copyAppeal()"
-                            class="px-4 py-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-sm font-semibold text-white"
+                            class="
+                                bg-[#111d8f]
+                                px-5
+                                py-2.5
+                                text-sm
+                                font-semibold
+                                text-white
+                                transition
+                                hover:bg-[#0b146d]
+                            "
                         >
                             Copy draft
                         </button>
 
                     </div>
 
-                @else
+                </div>
 
-                    <div class="mt-5 rounded-xl bg-gray-50 border border-gray-100 p-6 text-center">
+            @else
 
-                        <div class="text-3xl">
-                            📝
-                        </div>
+                {{-- ============================================= --}}
+                {{-- No appeal yet --}}
+                {{-- ============================================= --}}
 
-                        <p class="font-medium mt-3">
-                            No appeal draft yet
-                        </p>
+                <div class="mt-6 border border-gray-200 bg-[#fafafa] p-7">
 
-                        <p class="text-sm text-gray-500 mt-1">
-                            Generate a draft based on your case information.
-                        </p>
+                    <div
+                        class="
+                            flex
+                            h-10
+                            w-10
+                            items-center
+                            justify-center
+                            border
+                            border-gray-200
+                            bg-white
+                            text-lg
+                        "
+                    >
+                        ✎
+                    </div>
 
-                        <form
-                            method="POST"
-                            action="{{ route(
-                                'case.appeal.generate',
-                                $case
-                            ) }}"
-                            class="mt-5"
+
+                    <p
+                        class="
+                            mt-5
+                            text-base
+                            font-bold
+                            text-gray-950
+                        "
+                    >
+                        No appeal draft yet
+                    </p>
+
+
+                    <p
+                        class="
+                            mt-2
+                            max-w-xl
+                            text-sm
+                            leading-6
+                            text-gray-500
+                        "
+                    >
+                        Generate a draft based on your case information.
+                        You can review and edit it before submitting it.
+                    </p>
+
+
+                    <form
+                        method="POST"
+                        action="{{ route(
+                            'case.appeal.generate',
+                            $case
+                        ) }}"
+                        class="mt-5"
+                    >
+
+                        @csrf
+
+                        <button
+                            type="submit"
+                            class="
+                                bg-[#111d8f]
+                                px-5
+                                py-2.5
+                                text-sm
+                                font-semibold
+                                text-white
+                                transition
+                                hover:bg-[#0b146d]
+                            "
                         >
+                            Generate appeal
+                        </button>
 
-                            @csrf
-
-                            <button
-                                type="submit"
-                                class="px-5 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold"
-                            >
-                                Generate appeal
-                            </button>
-
-                        </form>
-
-                    </div>
-
-                @endif
-
-            </section>
-
-        </div>
-
-
-        {{-- RIGHT COLUMN --}}
-
-        <div class="space-y-6">
-
-
-            {{-- Case summary --}}
-
-            <section class="bg-white border border-gray-200 rounded-2xl p-6 card-shadow">
-
-                <h2 class="text-lg font-semibold">
-                    Case summary
-                </h2>
-
-                <div class="mt-4 space-y-3">
-
-                    <div class="flex justify-between gap-4 py-2 border-b border-gray-100">
-
-                        <span class="text-sm text-gray-500">
-                            Case ID
-                        </span>
-
-                        <span class="text-sm font-semibold">
-                            #{{ $case->id }}
-                        </span>
-
-                    </div>
-
-
-                    <div class="flex justify-between gap-4 py-2 border-b border-gray-100">
-
-                        <span class="text-sm text-gray-500">
-                            Account
-                        </span>
-
-                        <span class="text-sm font-semibold">
-                            {{ $case->account_type
-                                ? ucfirst($case->account_type)
-                                : 'Not provided' }}
-                        </span>
-
-                    </div>
-
-
-                    <div class="flex justify-between gap-4 py-2">
-
-                        <span class="text-sm text-gray-500">
-                            Status
-                        </span>
-
-                        <span class="text-sm font-semibold text-emerald-700">
-                            {{ ucfirst($case->status) }}
-                        </span>
-
-                    </div>
+                    </form>
 
                 </div>
 
-            </section>
+            @endif
+
+        </section>
 
 
-            {{-- Guidance --}}
+        {{-- ===================================================== --}}
+        {{-- BEFORE SUBMITTING --}}
+        {{-- ===================================================== --}}
 
-            <section class="rounded-2xl border border-blue-100 bg-blue-50 p-6">
+        <section
+            class="
+                mb-10
+                border-t
+                border-gray-200
+                pt-8
+            "
+        >
 
-                <div class="flex gap-3">
+            <div class="flex gap-4">
 
-                    <div class="text-xl">
-                        💡
-                    </div>
+                <div
+                    class="
+                        flex
+                        h-8
+                        w-8
+                        shrink-0
+                        items-center
+                        justify-center
+                        rounded-full
+                        bg-[#f3e8a4]
+                        text-[#4d4d29]
+                    "
+                >
+                    !
+                </div>
 
-                    <div>
 
-                        <h3 class="font-semibold text-gray-900">
-                            Before submitting
-                        </h3>
+                <div>
 
-                        <p class="text-sm text-gray-600 leading-6 mt-2">
-                            Review the appeal carefully. Only include information
-                            that is accurate and relevant to your situation.
-                        </p>
+                    <h3
+                        class="
+                            text-sm
+                            font-bold
+                            text-gray-950
+                        "
+                    >
+                        Before submitting
+                    </h3>
 
-                    </div>
+
+                    <p
+                        class="
+                            mt-2
+                            max-w-2xl
+                            text-sm
+                            leading-6
+                            text-gray-500
+                        "
+                    >
+                        Review the appeal carefully. Only include information
+                        that is accurate and relevant to your situation.
+                        Never include passwords, authentication codes,
+                        or recovery codes.
+                    </p>
 
                 </div>
 
-            </section>
+            </div>
+
+        </section>
 
 
-            {{-- Continue --}}
+        {{-- ===================================================== --}}
+        {{-- CONTINUE --}}
+        {{-- ===================================================== --}}
+
+        <div
+            class="
+                flex
+                flex-col
+                gap-4
+                border-t
+                border-gray-200
+                pt-8
+                sm:flex-row
+                sm:items-center
+                sm:justify-between
+            "
+        >
+
+            <div>
+
+                <div
+                    class="
+                        text-[10px]
+                        font-bold
+                        uppercase
+                        tracking-[0.14em]
+                        text-gray-400
+                    "
+                >
+                    Next step
+                </div>
+
+
+                <p
+                    class="
+                        mt-1
+                        text-sm
+                        font-semibold
+                        text-gray-900
+                    "
+                >
+                    Continue to recovery options
+                </p>
+
+            </div>
+
 
             <a
                 href="{{ route('case.escalate', $case) }}"
-                class="w-full inline-flex items-center justify-center bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-3.5 rounded-xl transition"
+                class="
+                    inline-flex
+                    items-center
+                    justify-center
+                    bg-[#111d8f]
+                    px-6
+                    py-3
+                    text-sm
+                    font-semibold
+                    text-white
+                    transition
+                    hover:bg-[#0b146d]
+                "
             >
                 Continue to recovery options →
             </a>
 
         </div>
 
-    </div>
+    </x-case-shell>
 
 @endsection
 
+
+{{-- ============================================================= --}}
+{{-- JAVASCRIPT --}}
+{{-- ============================================================= --}}
 
 @push('scripts')
 
@@ -608,25 +1063,68 @@ function copyAppeal()
     const textarea =
         document.getElementById('appealText');
 
+
     if (!textarea) {
         return;
     }
 
-    navigator.clipboard.writeText(textarea.value)
-        .then(function () {
 
-            alert('Appeal copied to clipboard.');
+    /*
+    |--------------------------------------------------------------------------
+    | Modern clipboard API
+    |--------------------------------------------------------------------------
+    */
 
-        })
-        .catch(function () {
+    if (navigator.clipboard) {
 
-            textarea.select();
+        navigator.clipboard
+            .writeText(textarea.value)
 
-            document.execCommand('copy');
+            .then(function () {
 
-            alert('Appeal copied to clipboard.');
+                alert('Appeal copied to clipboard.');
 
-        });
+            })
+
+            .catch(function () {
+
+                fallbackCopy(textarea);
+
+            });
+
+        return;
+    }
+
+
+    fallbackCopy(textarea);
+}
+
+
+function fallbackCopy(textarea)
+{
+    textarea.focus();
+
+    textarea.select();
+
+    textarea.setSelectionRange(
+        0,
+        textarea.value.length
+    );
+
+
+    try {
+
+        document.execCommand('copy');
+
+        alert('Appeal copied to clipboard.');
+
+    } catch (error) {
+
+        alert(
+            'Unable to copy automatically. Please copy the draft manually.'
+        );
+
+    }
 }
 
 </script>

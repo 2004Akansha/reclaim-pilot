@@ -14,10 +14,13 @@ class Analysis extends Model
         'confidence',
         'summary',
         'recommended_action',
+        'guidance',
+        'guidance_source',
     ];
 
     protected $casts = [
         'confidence' => 'float',
+        'guidance' => 'array',
     ];
 
     public function recoveryCase(): BelongsTo

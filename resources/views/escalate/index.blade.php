@@ -4,368 +4,671 @@
 
 @section('content')
 
-    <x-stepper :current-step="4" />
+    <x-case-shell
+        :current-step="4"
+        :case="$case"
+    >
+
+        {{-- ========================================================= --}}
+        {{-- HEADING --}}
+        {{-- ========================================================= --}}
+
+        <div class="mb-12">
+
+            <span class="section-label">
+                Step 04 · Recovery
+            </span>
 
 
-    {{-- Heading --}}
-
-    <div class="mb-8">
-
-        <h1 class="text-3xl sm:text-4xl font-bold tracking-tight">
-            Take the next step
-        </h1>
-
-        <p class="mt-3 text-gray-500 max-w-2xl leading-7">
-            Your case is prepared. Review your appeal and use the
-            platform's official recovery and support options.
-        </p>
-
-    </div>
+            <h1
+                class="
+                    mt-5
+                    text-4xl
+                    font-bold
+                    tracking-tight
+                    text-gray-950
+                "
+            >
+                Take the next step
+            </h1>
 
 
-    <div class="grid grid-cols-1 lg:grid-cols-[1.4fr_0.8fr] gap-6">
+            <p
+                class="
+                    mt-4
+                    max-w-2xl
+                    text-base
+                    leading-7
+                    text-gray-500
+                "
+            >
+                Your case is prepared. Review your recovery plan and
+                continue through the platform's official recovery options.
+            </p>
+
+        </div>
 
 
-        {{-- LEFT --}}
+        {{-- ========================================================= --}}
+        {{-- RECOMMENDED ACTION --}}
+        {{-- ========================================================= --}}
 
-        <div class="space-y-6">
+        <section class="document-section mb-12">
+
+            <span class="document-marker"></span>
 
 
-            {{-- Recommended action --}}
+            <div class="section-label">
+                Recommended action
+            </div>
 
-            <section class="bg-white border border-gray-200 rounded-2xl p-6 card-shadow">
 
-                <h2 class="text-lg font-semibold mb-5">
-                    Recommended next step
-                </h2>
+            <h2
+                class="
+                    mt-5
+                    text-2xl
+                    font-bold
+                    tracking-tight
+                    text-gray-950
+                "
+            >
+                {{ $recommendation['title'] }}
+            </h2>
 
-                <div class="rounded-2xl border border-emerald-200 bg-emerald-50 p-6">
 
-                    <div class="flex items-start gap-4">
+            <p
+                class="
+                    mt-3
+                    max-w-2xl
+                    text-sm
+                    leading-7
+                    text-gray-600
+                "
+            >
+                {{ $recommendation['description'] }}
+            </p>
 
-                        <div
-                            class="w-12 h-12 rounded-xl bg-emerald-100 flex items-center justify-center text-xl shrink-0"
-                        >
-                            ✓
+
+            <a
+                href="{{ route('case.prepare', $case) }}"
+                class="
+                    mt-6
+                    inline-flex
+                    items-center
+                    gap-3
+                    bg-[#111d8f]
+                    px-6
+                    py-3
+                    text-sm
+                    font-semibold
+                    text-white
+                    transition
+                    hover:bg-[#0b146d]
+                "
+            >
+
+                {{ $recommendation['button'] }}
+
+                <span>
+                    →
+                </span>
+
+            </a>
+
+        </section>
+
+
+        {{-- ========================================================= --}}
+        {{-- RECOVERY PATH --}}
+        {{-- ========================================================= --}}
+
+        <section class="document-section mb-12">
+
+            <span class="document-marker document-marker-olive"></span>
+
+
+            <div class="section-label">
+                Recovery path
+            </div>
+
+
+            <h2
+                class="
+                    mt-5
+                    text-2xl
+                    font-bold
+                    tracking-tight
+                    text-gray-950
+                "
+            >
+                What happens next
+            </h2>
+
+
+            @php
+
+                $steps = [
+                    [
+                        'title' => 'Review your appeal',
+                        'description' =>
+                            'Check that your explanation and account details are accurate.',
+                        'status' => 'Do now',
+                    ],
+
+                    [
+                        'title' => 'Use the official recovery process',
+                        'description' =>
+                            'Submit your request through the platform’s official support or recovery channel.',
+                        'status' => 'Next',
+                    ],
+
+                    [
+                        'title' => 'Provide verification if requested',
+                        'description' =>
+                            'Follow any legitimate verification instructions provided by the platform.',
+                        'status' => 'If needed',
+                    ],
+
+                    [
+                        'title' => 'Monitor the response',
+                        'description' =>
+                            'Review responses and follow any additional official instructions.',
+                        'status' => 'Ongoing',
+                    ],
+                ];
+
+            @endphp
+
+
+            <div class="mt-8">
+
+                @foreach($steps as $index => $step)
+
+                    <div class="relative flex gap-5">
+
+                        {{-- Connecting line --}}
+
+                        @if(!$loop->last)
+
+                            <div
+                                class="
+                                    absolute
+                                    left-[7px]
+                                    top-5
+                                    bottom-0
+                                    w-px
+                                    bg-gray-200
+                                "
+                            ></div>
+
+                        @endif
+
+
+                        {{-- Timeline marker --}}
+
+                        <div class="relative z-10 shrink-0">
+
+                            <div
+                                class="
+                                    flex
+                                    h-4
+                                    w-4
+                                    items-center
+                                    justify-center
+                                    rounded-full
+
+                                    {{ $index === 0
+                                        ? 'bg-[#b04c4c] ring-4 ring-[#f5e9e9]'
+                                        : 'border-2 border-[#777943] bg-white' }}
+                                "
+                            ></div>
+
                         </div>
 
-                        <div>
 
-                            <div class="text-xs font-semibold uppercase tracking-wide text-emerald-700">
-                                Recommended
+                        {{-- Step content --}}
+
+                        <div class="pb-10">
+
+                            <div class="flex flex-wrap items-center gap-3">
+
+                                <h3
+                                    class="
+                                        font-bold
+                                        text-gray-950
+                                    "
+                                >
+                                    {{ $step['title'] }}
+                                </h3>
+
+
+                                <span
+                                    class="
+                                        rounded
+                                        bg-gray-100
+                                        px-2
+                                        py-1
+                                        text-[10px]
+                                        font-bold
+                                        uppercase
+                                        tracking-wide
+                                        text-gray-500
+                                    "
+                                >
+                                    {{ $step['status'] }}
+                                </span>
+
                             </div>
 
-                            <h3 class="text-xl font-bold mt-1">
-                                {{ $recommendation['title'] }}
-                            </h3>
 
-                            <p class="text-sm text-gray-600 leading-6 mt-2">
-                                {{ $recommendation['description'] }}
+                            <p
+                                class="
+                                    mt-2
+                                    max-w-xl
+                                    text-sm
+                                    leading-6
+                                    text-gray-500
+                                "
+                            >
+                                {{ $step['description'] }}
                             </p>
 
                         </div>
 
                     </div>
 
-                    @php
-    $buttonText = match ($recommendation['action']) {
-        'submit_appeal' =>
-            'Review & submit appeal →',
+                @endforeach
 
-        'secure_account' =>
-            'Review security steps →',
+            </div>
 
-        'recover_account' =>
-            'Review recovery steps →',
-
-        'provide_more_information' =>
-            'Provide more information →',
-
-        default =>
-            'Review case →',
-    };
-@endphp
-
-<a
-    href="{{ route('case.prepare', $case) }}"
-    class="mt-5 inline-flex items-center justify-center px-5 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold transition"
->
-    {{ $buttonText }}
-</a>
-
-                </div>
-
-            </section>
+        </section>
 
 
-            {{-- Recovery path --}}
+        {{-- ========================================================= --}}
+        {{-- OFFICIAL RECOVERY OPTIONS --}}
+        {{-- ========================================================= --}}
 
-            <section class="bg-white border border-gray-200 rounded-2xl p-6 card-shadow">
+        <section class="document-section mb-12">
 
-                <h2 class="text-lg font-semibold">
-                    Your recovery path
-                </h2>
-
-
-                <div class="mt-6 space-y-0">
-
-                    @php
-
-                        $steps = [
-                            [
-                                'title' => 'Review your appeal',
-                                'description' => 'Check that your explanation and account details are accurate.',
-                                'status' => 'Do now',
-                            ],
-                            [
-                                'title' => 'Use the official recovery process',
-                                'description' => 'Submit your request through the platform’s official support or recovery channel.',
-                                'status' => 'Next',
-                            ],
-                            [
-                                'title' => 'Provide verification if requested',
-                                'description' => 'Follow any legitimate verification instructions provided by the platform.',
-                                'status' => 'If needed',
-                            ],
-                            [
-                                'title' => 'Monitor the response',
-                                'description' => 'Review responses and follow any additional official instructions.',
-                                'status' => 'Ongoing',
-                            ],
-                        ];
-
-                    @endphp
+            <span class="document-marker document-marker-olive"></span>
 
 
-                    @foreach($steps as $index => $step)
-
-                        <div class="flex gap-4">
-
-                            <div class="flex flex-col items-center">
-
-                                <div
-                                    class="
-                                        w-9 h-9 rounded-full flex items-center justify-center
-                                        font-semibold text-sm shrink-0
-                                        {{ $index === 0
-                                            ? 'bg-emerald-600 text-white'
-                                            : 'bg-gray-100 text-gray-600' }}
-                                    "
-                                >
-                                    {{ $index + 1 }}
-                                </div>
-
-                                @if(!$loop->last)
-
-                                    <div class="w-px h-16 bg-gray-200"></div>
-
-                                @endif
-
-                            </div>
+            <div class="section-label">
+                Official options
+            </div>
 
 
-                            <div class="pb-7">
-
-                                <div class="flex items-center gap-2 flex-wrap">
-
-                                    <h3 class="font-semibold">
-                                        {{ $step['title'] }}
-                                    </h3>
-
-                                    <span
-                                        class="text-xs px-2 py-1 rounded-full bg-gray-100 text-gray-600"
-                                    >
-                                        {{ $step['status'] }}
-                                    </span>
-
-                                </div>
-
-                                <p class="text-sm text-gray-500 leading-6 mt-1">
-                                    {{ $step['description'] }}
-                                </p>
-
-                            </div>
-
-                        </div>
-
-                    @endforeach
-
-                </div>
-
-            </section>
-
-        </div>
+            <h2
+                class="
+                    mt-5
+                    text-2xl
+                    font-bold
+                    tracking-tight
+                    text-gray-950
+                "
+            >
+                Official recovery channels
+            </h2>
 
 
-        {{-- RIGHT --}}
-
-        <div class="space-y-6">
-
-
-            {{-- Official recovery options --}}
-
-            <section class="bg-white border border-gray-200 rounded-2xl p-6 card-shadow">
-
-                <h2 class="text-lg font-semibold">
-                    Official recovery options
-                </h2>
-
-                <p class="text-sm text-gray-500 mt-1">
-                    Use only official platform channels.
-                </p>
+            <p
+                class="
+                    mt-3
+                    max-w-2xl
+                    text-sm
+                    leading-7
+                    text-gray-500
+                "
+            >
+                Use only official platform recovery and support channels
+                when continuing with your case.
+            </p>
 
 
-                <div class="mt-5 space-y-3">
+            <div class="mt-7 space-y-4">
 
+                {{-- Account recovery --}}
 
-                    {{-- Placeholder for official link --}}
+                <a
+                    href="#"
+                    class="
+                        group
+                        block
+                        border
+                        border-gray-200
+                        bg-white
+                        p-5
+                        transition
+                        hover:border-[#111d8f]
+                        hover:bg-[#f8f8ff]
+                    "
+                >
 
-                    <a
-                        href="#"
-                        class="block p-4 rounded-xl border border-gray-200 hover:border-emerald-300 hover:bg-emerald-50/40 transition"
+                    <div
+                        class="
+                            flex
+                            items-center
+                            justify-between
+                            gap-4
+                        "
                     >
 
-                        <div class="flex items-center justify-between">
+                        <div>
 
-                            <div>
-
-                                <div class="font-semibold text-sm">
-                                    Account recovery
-                                </div>
-
-                                <div class="text-xs text-gray-500 mt-1">
-                                    Open the platform's official recovery process.
-                                </div>
-
+                            <div
+                                class="
+                                    text-sm
+                                    font-bold
+                                    text-gray-950
+                                "
+                            >
+                                Account recovery
                             </div>
 
-                            <span class="text-gray-400">
-                                →
-                            </span>
+
+                            <div
+                                class="
+                                    mt-1
+                                    text-sm
+                                    leading-6
+                                    text-gray-500
+                                "
+                            >
+                                Open the platform's official recovery process.
+                            </div>
 
                         </div>
 
-                    </a>
+
+                        <span
+                            class="
+                                text-lg
+                                text-gray-400
+                                transition
+                                group-hover:text-[#111d8f]
+                            "
+                        >
+                            →
+                        </span>
+
+                    </div>
+
+                </a>
 
 
-                    <a
-                        href="#"
-                        class="block p-4 rounded-xl border border-gray-200 hover:border-emerald-300 hover:bg-emerald-50/40 transition"
+                {{-- Official support --}}
+
+                <a
+                    href="#"
+                    class="
+                        group
+                        block
+                        border
+                        border-gray-200
+                        bg-white
+                        p-5
+                        transition
+                        hover:border-[#111d8f]
+                        hover:bg-[#f8f8ff]
+                    "
+                >
+
+                    <div
+                        class="
+                            flex
+                            items-center
+                            justify-between
+                            gap-4
+                        "
                     >
 
-                        <div class="flex items-center justify-between">
+                        <div>
 
-                            <div>
-
-                                <div class="font-semibold text-sm">
-                                    Official support
-                                </div>
-
-                                <div class="text-xs text-gray-500 mt-1">
-                                    Use the platform's official support resources.
-                                </div>
-
+                            <div
+                                class="
+                                    text-sm
+                                    font-bold
+                                    text-gray-950
+                                "
+                            >
+                                Official support
                             </div>
 
-                            <span class="text-gray-400">
-                                →
-                            </span>
+
+                            <div
+                                class="
+                                    mt-1
+                                    text-sm
+                                    leading-6
+                                    text-gray-500
+                                "
+                            >
+                                Use the platform's official support resources.
+                            </div>
 
                         </div>
 
-                    </a>
 
+                        <span
+                            class="
+                                text-lg
+                                text-gray-400
+                                transition
+                                group-hover:text-[#111d8f]
+                            "
+                        >
+                            →
+                        </span>
+
+                    </div>
+
+                </a>
+
+            </div>
+
+        </section>
+
+
+        {{-- ========================================================= --}}
+        {{-- SAFETY NOTICE --}}
+        {{-- ========================================================= --}}
+
+        <section
+            class="
+                mb-12
+                border
+                border-[#dedde8]
+                bg-[#f7f6fc]
+                p-6
+            "
+        >
+
+            <div class="flex items-start gap-4">
+
+                <div class="shrink-0 text-[#111d8f]">
+
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke-width="1.8"
+                        stroke="currentColor"
+                        class="h-6 w-6"
+                    >
+
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M12 9v3.75m0 3.75h.008M10.29 3.86l-7.2 12.48A2 2 0 004.82 19h14.36a1.99 1.99 0 001.73-2.66l-7.2-12.48a2 2 0 00-3.46 0z"
+                        />
+
+                    </svg>
 
                 </div>
 
-            </section>
 
+                <div>
 
-            {{-- Safety information --}}
-
-            <section class="rounded-2xl border border-amber-200 bg-amber-50 p-6">
-
-                <div class="flex items-start gap-3">
-
-                    <div class="text-xl">
-                        ⚠️
+                    <div
+                        class="
+                            text-sm
+                            font-bold
+                            text-gray-950
+                        "
+                    >
+                        Stay safe
                     </div>
 
-                    <div>
 
-                        <h3 class="font-semibold text-gray-900">
-                            Stay safe
-                        </h3>
-
-                        <p class="text-sm text-gray-600 leading-6 mt-2">
-                            ReclaimPilot does not need your platform password,
-                            authentication codes, or private account credentials.
-                            Never share those details with anyone claiming to
-                            provide recovery assistance.
-                        </p>
-
-                    </div>
+                    <p
+                        class="
+                            mt-2
+                            max-w-2xl
+                            text-sm
+                            leading-6
+                            text-gray-500
+                        "
+                    >
+                        ReclaimPilot does not need your platform password,
+                        authentication codes, or private account credentials.
+                        Never share those details with anyone claiming to
+                        provide recovery assistance.
+                    </p>
 
                 </div>
 
-            </section>
+            </div>
+
+        </section>
 
 
-            {{-- Case summary --}}
+        {{-- ========================================================= --}}
+        {{-- CASE SUMMARY --}}
+        {{-- ========================================================= --}}
 
-            <section class="bg-white border border-gray-200 rounded-2xl p-6 card-shadow">
+        <section class="document-section">
 
-                <h2 class="text-lg font-semibold">
-                    Case summary
-                </h2>
-
-
-                <div class="mt-4 space-y-3">
-
-                    <div class="flex justify-between gap-4 py-2 border-b border-gray-100">
-
-                        <span class="text-sm text-gray-500">
-                            Case ID
-                        </span>
-
-                        <span class="text-sm font-semibold">
-                            #{{ $case->id }}
-                        </span>
-
-                    </div>
+            <span class="document-marker"></span>
 
 
-                    <div class="flex justify-between gap-4 py-2 border-b border-gray-100">
-
-                        <span class="text-sm text-gray-500">
-                            Issue
-                        </span>
-
-                        <span class="text-sm font-semibold text-right">
-                            {{ ucwords(str_replace('_', ' ', $case->issue_type)) }}
-                        </span>
-
-                    </div>
+            <div class="section-label">
+                Case summary
+            </div>
 
 
-                    <div class="flex justify-between gap-4 py-2">
+            <h2
+                class="
+                    mt-5
+                    text-2xl
+                    font-bold
+                    tracking-tight
+                    text-gray-950
+                "
+            >
+                Recovery case details
+            </h2>
 
-                        <span class="text-sm text-gray-500">
-                            Status
-                        </span>
 
-                        <span class="text-sm font-semibold text-emerald-700">
-                            {{ ucfirst($case->status) }}
-                        </span>
+            <div class="mt-7 max-w-2xl">
 
-                    </div>
+                {{-- Case ID --}}
+
+                <div
+                    class="
+                        flex
+                        items-center
+                        justify-between
+                        gap-4
+                        border-b
+                        border-gray-100
+                        py-4
+                    "
+                >
+
+                    <span class="text-sm text-gray-500">
+                        Case ID
+                    </span>
+
+
+                    <span
+                        class="
+                            text-sm
+                            font-semibold
+                            text-gray-950
+                        "
+                    >
+                        #{{ $case->id }}
+                    </span>
 
                 </div>
 
-            </section>
 
-        </div>
+                {{-- Issue --}}
 
-    </div>
+                <div
+                    class="
+                        flex
+                        items-center
+                        justify-between
+                        gap-4
+                        border-b
+                        border-gray-100
+                        py-4
+                    "
+                >
+
+                    <span class="text-sm text-gray-500">
+                        Issue
+                    </span>
+
+
+                    <span
+                        class="
+                            text-right
+                            text-sm
+                            font-semibold
+                            text-gray-950
+                        "
+                    >
+                        {{ ucwords(str_replace('_', ' ', $case->issue_type)) }}
+                    </span>
+
+                </div>
+
+
+                {{-- Status --}}
+
+                <div
+                    class="
+                        flex
+                        items-center
+                        justify-between
+                        gap-4
+                        py-4
+                    "
+                >
+
+                    <span class="text-sm text-gray-500">
+                        Status
+                    </span>
+
+
+                    <span
+                        class="
+                            text-sm
+                            font-semibold
+                            text-[#111d8f]
+                        "
+                    >
+                        {{ ucfirst($case->status) }}
+                    </span>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </x-case-shell>
 
 @endsection

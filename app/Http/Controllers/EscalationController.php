@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\RecoveryCase;
 use App\Services\RecoveryRecommendationService;
+use Illuminate\Support\Facades\Gate;
 
 class EscalationController extends Controller
 {
@@ -14,6 +15,9 @@ class EscalationController extends Controller
         RecoveryCase $case,
         RecoveryRecommendationService $recommendationService
     ) {
+   
+        Gate::authorize('view', $case);        
+
         $case->load([
             'evidence',
             'analyses',

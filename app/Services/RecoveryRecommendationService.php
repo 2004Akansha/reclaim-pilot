@@ -29,7 +29,7 @@ class RecoveryRecommendationService
                 'description' =>
                     'Review the generated appeal and submit it through the platform\'s official recovery or appeal process.',
                 'action' => 'submit_appeal',
-                'button' => 'Review & submit appeal →',
+                'button' => 'Review & submit appeal',
             ],
 
             'secure_account' => [
