@@ -31,6 +31,7 @@ class AnalysisController extends Controller
         'screenshots.analysis',
         'analyses',
         'evidence',
+        'followups',
     ]);
 
     $analysis = $case->analyses()

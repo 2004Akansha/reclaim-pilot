@@ -1737,6 +1737,212 @@
 
                 @endif
 
+                {{-- ================================================= --}}
+{{-- UPDATE CASE / FOLLOW-UP --}}
+{{-- ================================================= --}}
+
+<section class="document-section mt-12">
+
+    <span class="document-marker document-marker-olive"></span>
+
+    <div class="section-label">
+        Continue your case
+    </div>
+
+    <div class="mt-5">
+
+        <h2
+            class="
+                text-2xl
+                font-bold
+                tracking-tight
+                text-gray-950
+            "
+        >
+            Do you have more information?
+        </h2>
+
+        <p
+            class="
+                mt-3
+                max-w-2xl
+                text-sm
+                leading-7
+                text-gray-600
+            "
+        >
+            If you remembered something, received a new message,
+            or have additional context about your account, add it here.
+            We'll use the new information when analyzing your case again.
+        </p>
+
+    </div>
+
+
+    {{-- Existing follow-ups --}}
+    @if($case->followups->count())
+
+        <div class="mt-7 space-y-4">
+
+            <h3
+                class="
+                    text-sm
+                    font-bold
+                    uppercase
+                    tracking-wide
+                    text-gray-500
+                "
+            >
+                Previous updates
+            </h3>
+
+            @foreach($case->followups as $followup)
+
+                <div
+                    class="
+                        border-l-4
+                        border-[#777943]
+                        bg-[#f7f7ef]
+                        px-5
+                        py-4
+                    "
+                >
+
+                    <p
+                        class="
+                            text-sm
+                            leading-7
+                            text-gray-700
+                        "
+                    >
+                        {{ $followup->message }}
+                    </p>
+
+                    <div
+                        class="
+                            mt-3
+                            flex
+                            items-center
+                            gap-3
+                            text-xs
+                            text-gray-500
+                        "
+                    >
+
+                        <span>
+                            Added
+                            {{ $followup->created_at->format('M d, Y \a\t h:i A') }}
+                        </span>
+
+                        <span>•</span>
+
+                        <span>
+                            {{ ucfirst($followup->status) }}
+                        </span>
+
+                    </div>
+
+                </div>
+
+            @endforeach
+
+        </div>
+
+    @endif
+
+
+    {{-- Add new follow-up --}}
+
+    <form
+        method="POST"
+        action="{{ route('case.followup.store', $case) }}"
+        class="mt-8"
+    >
+
+        @csrf
+
+        <label
+            for="followup-message"
+            class="
+                block
+                text-sm
+                font-semibold
+                text-gray-900
+            "
+        >
+            Additional information
+        </label>
+
+        <p class="mt-1 text-xs text-gray-500">
+            Do not include passwords, recovery codes, or other sensitive
+            authentication credentials.
+        </p>
+
+
+        <textarea
+            id="followup-message"
+            name="message"
+            rows="6"
+            maxlength="5000"
+            required
+            placeholder="For example: I received an email from the platform saying my account was restricted because of a community guideline issue."
+            class="
+                mt-4
+                w-full
+                border
+                border-gray-200
+                bg-[#f7f6fc]
+                px-4
+                py-4
+                text-sm
+                leading-7
+                text-gray-700
+                outline-none
+                transition
+                focus:border-[#111d8f]
+                focus:ring-2
+                focus:ring-[#111d8f]/10
+            "
+        >{{ old('message') }}</textarea>
+
+
+        @error('message')
+
+            <p class="mt-2 text-sm text-[#b04c4c]">
+                {{ $message }}
+            </p>
+
+        @enderror
+
+
+        <div class="mt-5">
+
+            <button
+                type="submit"
+                class="
+                    inline-flex
+                    w-full
+                    items-center
+                    justify-center
+                    bg-[#111d8f]
+                    px-6
+                    py-4
+                    text-sm
+                    font-semibold
+                    text-white
+                    transition
+                    hover:bg-[#0d176f]
+                "
+            >
+                Add information & re-analyze
+            </button>
+
+        </div>
+
+    </form>
+
+</section>
+
 
                 {{-- ================================================= --}}
                 {{-- NEXT STEPS --}}

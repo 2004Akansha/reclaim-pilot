@@ -40,8 +40,19 @@ class GuidanceAIService
         */
 
         $case->loadMissing([
+            'followups',
             'screenshots.analysis',
         ]);
+
+        $followupInformation = $case->followups
+            ->map(function ($followup) {
+                return [
+                    'message' => $followup->message,
+                    'created_at' => $followup->created_at?->toDateTimeString(),
+                ];
+            })
+            ->values()
+            ->all();
 
         $screenshotEvidence = $case->screenshots
             ->map(function ($screenshot) {
@@ -98,17 +109,43 @@ Your job is to create SAFE, PRACTICAL and CASE-SPECIFIC recovery guidance.
 
 The guidance must be based on:
 
-1. The user's selected issue type.
-2. The user's description.
+1. The user's original issue type.
+2. The user's original description.
 3. The account type.
-4. The final case analysis.
-5. The possible reason.
-6. The analysis confidence.
-7. Screenshot evidence.
-8. The authoritative recovery action.
+4. Follow-up information provided after the original case.
+5. The final case analysis.
+6. The possible reason.
+7. The analysis confidence.
+8. Screenshot evidence.
+9. The authoritative recovery action.
 
 The guidance must NOT be generic when useful case-specific information
 is available.
+
+FOLLOW-UP INFORMATION RULES:
+
+Follow-up information represents additional information provided by the
+user after the original case was created.
+
+Treat follow-up information as additional evidence.
+
+Use it when it provides useful details about:
+- what happened
+- when the problem occurred
+- messages received by the user
+- unexpected account changes
+- login problems
+- policy or restriction notifications
+- recovery attempts
+
+Do not ignore the original case description.
+
+Combine the original case information with the follow-up information.
+
+If follow-up information conflicts with the original description,
+acknowledge the conflict rather than inventing an explanation.
+
+Do not treat a user's statement as independently verified evidence.
 
 IMPORTANT WORKFLOW RULE:
 
@@ -240,6 +277,16 @@ PROMPT;
                 'email_provided' =>
                     !empty($case->email),
             ],
+
+            /*
+            |--------------------------------------------------------------------------
+            | Follow-up information
+            |--------------------------------------------------------------------------
+            */
+
+            'followup_information' =>
+                $followupInformation,
+
 
             'analysis' => [
                 'issue_detected' =>
@@ -486,8 +533,16 @@ PROMPT;
         string $authoritativeAction
     ): array {
 
+        $case->loadMissing('followups');
+
+        $followupText = $case->followups
+            ->pluck('message')
+            ->implode(' ');
+
         $description = strtolower(
-            trim((string) $case->description)
+            trim(
+                ($case->description ?? '') . ' ' . $followupText
+            )
         );
 
         /*
@@ -593,8 +648,6 @@ PROMPT;
             $steps = [
 
                 'Use the platform\'s official compromised-account recovery process rather than an unofficial recovery service.',
-
-                'Report that the account email address was changed without your authorization.',
 
             ];
 

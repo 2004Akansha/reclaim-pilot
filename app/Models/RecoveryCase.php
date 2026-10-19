@@ -54,5 +54,10 @@ class RecoveryCase extends Model
         return $this->hasMany(Evidence::class);
     }
 
+    public function followups(): HasMany
+    {
+        return $this->hasMany(CaseFollowup::class);
+    }
+
 
 }

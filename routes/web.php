@@ -7,6 +7,7 @@ use App\Http\Controllers\RecoveryController;
 use App\Http\Controllers\EscalationController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EvidenceController;
+use App\Http\Controllers\CaseFollowupController;
 
 
 /*
@@ -136,6 +137,12 @@ Route::middleware('auth')->group(function () {
         '/case/{case}/analysis-status',
         [AnalysisController::class, 'status']
     )->name('case.analysis.status');
+
+    Route::post(
+        '/case/{case}/follow-up',
+        [CaseFollowupController::class, 'store']
+    )->name('case.followup.store');
+
 
 
 });
