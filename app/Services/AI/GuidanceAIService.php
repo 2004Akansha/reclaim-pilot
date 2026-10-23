@@ -580,11 +580,13 @@ PROMPT;
             } elseif (
                 str_contains($description, 'policy') ||
                 str_contains($description, 'guideline') ||
+                str_contains($description, 'community guideline') ||
+                str_contains($description, 'community guidelines') ||
                 str_contains($description, 'violation')
             ) {
 
                 $steps[] =
-                    'Address the policy or guideline concern mentioned in the account notification without making unsupported claims.';
+                    'Review the community-guideline or policy notification mentioned in the case and address the specific concern in your appeal.';
 
             } else {
 

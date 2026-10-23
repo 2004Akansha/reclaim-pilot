@@ -1154,4 +1154,4 @@
 
 </div>
 
-@endsection
+@endsectionx

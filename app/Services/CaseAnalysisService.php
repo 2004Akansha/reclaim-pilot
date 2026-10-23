@@ -324,7 +324,8 @@ PROMPT;
      * Validate the final AI analysis.
      */
     private function validateAnalysis(
-        array $data
+        array $data,
+        RecoveryCase $case
     ): array {
 
         $validator = Validator::make(
@@ -375,6 +376,53 @@ PROMPT;
         }
 
 
-        return $validator->validated();
+        $validated = $validator->validated();
+
+/*
+|--------------------------------------------------------------------------
+| Enforce application recovery workflow
+|--------------------------------------------------------------------------
+|
+| The AI analyzes the case, but Laravel determines the final
+| recovery action based on the user's selected issue type.
+|
+*/
+$validated['issue_detected'] = match ($case->issue_type) {
+
+    'account_disabled' =>
+        'Account disabled',
+
+    'hacked_account' =>
+        'Possible hacked account',
+
+    'cant_login' =>
+        "Can't log in",
+
+    'other' =>
+        'Other account issue',
+
+    default =>
+        'Unknown issue',
+};
+
+$validated['recommended_action'] = match ($case->issue_type) {
+
+    'account_disabled' =>
+        'submit_appeal',
+
+    'hacked_account' =>
+        'secure_account',
+
+    'cant_login' =>
+        'recover_account',
+
+    'other' =>
+        'provide_more_information',
+
+    default =>
+        'provide_more_information',
+};
+
+return $validated;;
     }
 }
